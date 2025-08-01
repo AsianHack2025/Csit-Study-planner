@@ -1,0 +1,2675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Planner - Premium</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+            max-width: 1600px;
+            margin: 0 auto;
+            background: rgba(10, 15, 40, 0.9);
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            width: 80px;
+            background: rgba(15, 25, 60, 0.95);
+            color: white;
+            transition: width 0.3s ease;
+            overflow: hidden;
+            height: 100vh;
+            position: fixed;
+            z-index: 100;
+            border-right: 1px solid rgba(100, 150, 255, 0.2);
+        }
+
+        .navbar.expanded {
+            width: 220px;
+        }
+
+        .nav-header {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-profile {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3498db, #8e44ad);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 18px;
+            box-shadow: 0 0 10px rgba(100, 150, 255, 0.5);
+        }
+
+        .nav-icon {
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .nav-icon:hover {
+            transform: scale(1.1);
+            color: #3498db;
+        }
+
+        .nav-links {
+            list-style: none;
+            padding: 20px 0;
+            margin: 0;
+        }
+
+        .nav-item {
+            padding: 15px 25px;
+            transition: background-color 0.3s;
+        }
+
+        .nav-item:hover {
+            background-color: rgba(52, 152, 219, 0.2);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(90deg, rgba(52, 152, 219, 0.7), transparent);
+            border-left: 4px solid #3498db;
+        }
+
+        .nav-item a {
+            color: #e0e0ff;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            font-size: 1.1rem;
+        }
+
+        .nav-item i {
+            font-size: 1.5rem;
+            margin-right: 15px;
+            width: 30px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .nav-item:hover i {
+            transform: scale(1.2);
+        }
+
+        .nav-text {
+            display: none;
+            white-space: nowrap;
+            font-weight: 500;
+        }
+
+        .navbar.expanded .nav-text {
+            display: inline;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            margin-left: 80px;
+            padding: 30px;
+            transition: margin-left 0.3s ease;
+        }
+
+        .navbar.expanded ~ .main-content {
+            margin-left: 220px;
+        }
+
+        .page {
+            display: none;
+            animation: fadeIn 0.5s ease;
+            min-height: calc(100vh - 60px);
+        }
+
+        .page.active-page {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            margin-bottom: 25px;
+            color: #fff;
+            font-size: 2.8rem;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(100, 150, 255, 0.5);
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, #3498db, transparent);
+            border-radius: 2px;
+        }
+
+        h2 {
+            margin: 20px 0 15px;
+            color: #e0e0ff;
+            font-size: 1.8rem;
+        }
+
+        p {
+            color: #b0b0ff;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        /* Login Container */
+        .login-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .login-box {
+            background: rgba(25, 40, 80, 0.9);
+            padding: 40px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(100, 150, 255, 0.2);
+        }
+
+        .login-box h2 {
+            margin-bottom: 25px;
+            color: #fff;
+            font-size: 2rem;
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(100, 150, 255, 0.3);
+            border-radius: 8px;
+            background: rgba(10, 15, 40, 0.7);
+            color: white;
+            font-size: 1rem;
+        }
+
+        .login-box button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(90deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+        }
+
+        .login-box button:hover {
+            background: linear-gradient(90deg, #2980b9, #3498db);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.6);
+        }
+
+        .user-select {
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .user-select label {
+            color: #b0b0ff;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .user-select select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid rgba(100, 150, 255, 0.3);
+            border-radius: 8px;
+            background: rgba(10, 15, 40, 0.7);
+            color: white;
+            font-size: 1rem;
+        }
+
+        /* Home Page Styles */
+        #home {
+            text-align: center;
+            padding-top: 30px;
+        }
+
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            margin-top: 40px;
+            justify-content: center;
+        }
+
+        .feature-card {
+            flex: 1;
+            min-width: 280px;
+            max-width: 350px;
+            background: rgba(25, 40, 80, 0.7);
+            padding: 30px 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(100, 150, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+            background: rgba(30, 50, 100, 0.8);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #3498db, #8e44ad);
+        }
+
+        .feature-card i {
+            font-size: 3.5rem;
+            color: #3498db;
+            margin-bottom: 20px;
+            background: rgba(20, 30, 60, 0.7);
+            width: 80px;
+            height: 80px;
+            line-height: 80px;
+            border-radius: 50%;
+            text-align: center;
+        }
+
+        .feature-card h3 {
+            margin-bottom: 15px;
+            color: #fff;
+            font-size: 1.6rem;
+        }
+
+        .feature-card p {
+            font-size: 1.1rem;
+        }
+
+        /* Timer Page Styles */
+        .timer-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(25, 40, 80, 0.7);
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(100, 150, 255, 0.2);
+        }
+
+        .current-task {
+            background: rgba(20, 30, 60, 0.7);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            font-size: 1.2rem;
+            color: #e0e0ff;
+            border: 1px solid rgba(100, 150, 255, 0.3);
+        }
+
+        .timer-display {
+            font-size: 5rem;
+            font-family: 'Courier New', monospace;
+            margin: 30px 0;
+            color: #fff;
+            text-shadow: 0 0 15px rgba(100, 150, 255, 0.7);
+            letter-spacing: 3px;
+        }
+
+        .timer-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .timer-controls button {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 50px;
+            background: linear-gradient(90deg, #3498db, #2980b9);
+            color: white;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+        }
+
+        .timer-controls button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.6);
+        }
+
+        .timer-controls button:active {
+            transform: translateY(1px);
+        }
+
+        #pause-timer {
+            background: linear-gradient(90deg, #f39c12, #e67e22);
+        }
+
+        #reset-timer {
+            background: linear-gradient(90deg, #e74c3c, #c0392b);
+        }
+
+        /* Pause Controls */
+        .pause-controls {
+            display: none;
+            margin-top: 25px;
+            text-align: center;
+        }
+
+        .pause-controls button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 0 10px;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .pause-controls button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        #take-notes-btn {
+            background: linear-gradient(90deg, #9b59b6, #8e44ad);
+        }
+
+        #switch-task-btn {
+            background: linear-gradient(90deg, #f39c12, #d35400);
+        }
+
+        .timer-settings {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 25px;
+            background: rgba(20, 30, 60, 0.7);
+            padding: 20px;
+            border-radius: 15px;
+        }
+
+        .timer-settings label {
+            text-align: left;
+            font-weight: 500;
+            color: #b0b0ff;
+            font-size: 1.1rem;
+        }
+
+        .timer-settings input {
+            padding: 12px;
+            border: 1px solid rgba(100, 150, 255, 0.3);
+            border-radius: 8px;
+            width: 100%;
+            background: rgba(10, 15, 40, 0.7);
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        /* Progress Page Styles */
+        .progress-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .progress-chart-container {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(25, 40, 80, 0.7);
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(100, 150, 255, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .progress-chart-container h3 {
+            color: #fff;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        /* Clock Visualization */
+        .clock-visualization {
+            width: 200px;
+            height: 200px;
+            margin: 20px auto;
+            position: relative;
+        }
+
+        .clock-circle {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: rgba(20, 30, 60, 0.7);
+            position: relative;
+            overflow: hidden;
+            border: 5px solid rgba(100, 150, 255, 0.2);
+        }
+
+        .clock-progress {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            clip: rect(0, 100px, 200px, 0);
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            transform: rotate(0deg);
+            transition: transform 0.5s linear;
+        }
+
+        .clock-progress-fill {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            clip: rect(0, 100px, 200px, 0);
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            transform: rotate(180deg);
+            transition: transform 0.5s linear;
+        }
+
+        .clock-inner {
+            position: absolute;
+            width: 80%;
+            height: 80%;
+            background: rgba(25, 40, 80, 0.7);
+            border-radius: 50%;
+            top: 10%;
+            left: 10%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(100, 150, 255, 0.5);
+            border: 3px solid rgba(100, 150, 255, 0.2);
+        }
+
+        .progress-stats {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            min-width: 280px;
+        }
+
+        .stat-card {
+            background: rgba(25, 40, 80, 0.7);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            text-align: center;
+            border: 1px solid rgba(100, 150, 255, 0.2);
+        }
+
+        .stat-card h3 {
+            color: #b0b0ff;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            color: #fff;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(100, 150, 255, 0.5);
+        }
+
+        .subject-list {
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .subject-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid rgba(100, 150, 255, 0.2);
+        }
+
+        .subject-name {
+            display: flex;
+            align-items: center;
+        }
+
+        .subject-color {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            margin-right: 10px;
+            display: inline-block;
+        }
+
+        /* Tasks Page Styles */
+        .task-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .task-form {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            background: rgba(25, 40, 80, 0.7);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(100, 150, 255, 0.2);
+        }
+
+        .task-form input {
+            flex: 2;
+            min-width: 200px;
+            padding: 15px;
+            border: 1px solid rgba(100, 150, 255, 0.3);
+            border-radius: 8px;
+            background: rgba(10, 15, 40, 0.7);
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        .task-form button {
+            padding: 15px 30px;
+            background: linear-gradient(90deg, #2ecc71, #27ae60);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4);
+        }
+
+        .task-form button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(46, 204, 113, 0.6);
+        }
+
+        .task-form select {
+            padding: 15px;
+            border: 1px solid rgba(100, 150, 255, 0.3);
+            border-radius: 8px;
+            background: rgba(10, 15, 40, 0.7);
+            color: white;
+            font-size: 1.1rem;
+            min-width: 200px;
+        }
+
+        .task-list {
+            background: rgba(25, 40, 80, 0.7);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(100, 150, 255, 0.2);
+        }
+
+        .task-list h3 {
+            margin-bottom: 20px;
+            color: #fff;
+            font-size: 1.5rem;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(100, 150, 255, 0.3);
+        }
+
+        .task-list ul {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+
+        .task-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid rgba(100, 150, 255, 0.2);
+            background: rgba(20, 30, 60, 0.5);
+            margin-bottom: 10px;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+
+        .task-item:hover {
+            background: rgba(30, 50, 100, 0.7);
+            transform: translateX(5px);
+        }
+
+        .task-item:last-child {
+            border-bottom: none;
+        }
+
+        .task-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex: 1;
+        }
+
+        .task-checkbox {
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
+        }
+
+        .task-text {
+            flex: 1;
+            font-size: 1.2rem;
+        }
+
+        .task-text.completed {
+            text-decoration: line-through;
+            color: #95a5a6;
+        }
+
+        .task-priority {
+            font-size: 0.9rem;
+            padding: 5px 12px;
+            border-radius: 15px;
+            color: white;
+            font-weight: 600;
+        }
+
+        .priority-low {
+            background: linear-gradient(90deg, #2ecc71, #27ae60);
+        }
+
+        .priority-medium {
+            background: linear-gradient(90deg, #f39c12, #e67e22);
+        }
+
+        .priority-high {
+            background: linear-gradient(90deg, #e74c3c, #c0392b);
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .task-actions button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .task-actions button:hover {
+            transform: translateY(-2px);
+        }
+
+        .start-task {
+            background: linear-gradient(90deg, #3498db, #2980b9);
+            color: white;
+        }
+
+        .edit-task {
+            background: linear-gradient(90deg, #f39c12, #e67e22);
+            color: white;
+        }
+
+        .delete-task {
+            background: linear-gradient(90deg, #e74c3c, #c0392b);
+            color: white;
+        }
+
+        /* Notes Page Styles */
+        .notes-container {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+        }
+
+        .notes-form {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(25, 40, 80, 0.7);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(100, 150, 255, 0.2);
+        }
+
+        .notes-form input,
+        .notes-form textarea {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(100, 150, 255, 0.3);
+            border-radius: 8px;
+            background: rgba(10, 15, 40, 0.7);
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        .notes-form textarea {
+            min-height: 200px;
+            resize: vertical;
+        }
+
+        .notes-form button {
+            padding: 15px 30px;
+            background: linear-gradient(90deg, #9b59b6, #8e44ad);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 15px rgba(155, 89, 182, 0.4);
+            width: 100%;
+        }
+
+        .notes-form button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(155, 89, 182, 0.6);
+        }
+
+        .notes-list {
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .note-card {
+            background: rgba(25, 40, 80, 0.7);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(100, 150, 255, 0.2);
+            transition: all 0.3s;
+        }
+
+        .note-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+        }
+
+        .note-card h3 {
+            margin-bottom: 15px;
+            color: #fff;
+            font-size: 1.5rem;
+        }
+
+        .note-card p {
+            color: #b0b0ff;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .note-actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .note-actions button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .note-actions button:hover {
+            transform: translateY(-2px);
+        }
+
+        .edit-note {
+            background: linear-gradient(90deg, #3498db, #2980b9);
+            color: white;
+        }
+
+        .delete-note {
+            background: linear-gradient(90deg, #e74c3c, #c0392b);
+            color: white;
+        }
+
+        /* History Page Styles */
+        .history-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(25, 40, 80, 0.7);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(100, 150, 255, 0.2);
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid rgba(100, 150, 255, 0.2);
+            background: rgba(20, 30, 60, 0.5);
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+
+        .history-item:hover {
+            background: rgba(30, 50, 100, 0.7);
+        }
+
+        .history-info {
+            flex: 1;
+        }
+
+        .history-task {
+            font-size: 1.2rem;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+
+        .history-duration {
+            color: #b0b0ff;
+            font-size: 1rem;
+        }
+
+        .history-date {
+            color: #b0b0ff;
+            font-size: 1rem;
+            white-space: nowrap;
+            margin-left: 20px;
+        }
+
+        /* Friends Page Styles */
+        .friends-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .manage-friends {
+            padding: 15px 30px;
+            background: linear-gradient(90deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .manage-friends:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.6);
+        }
+
+        .friend-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .friend-card {
+            background: rgba(25, 40, 80, 0.7);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(100, 150, 255, 0.2);
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .friend-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+        }
+
+        .friend-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3498db, #8e44ad);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 24px;
+            margin: 0 auto 15px;
+            box-shadow: 0 0 15px rgba(100, 150, 255, 0.5);
+        }
+
+        .friend-card h3 {
+            margin-bottom: 15px;
+            color: #fff;
+            font-size: 1.5rem;
+        }
+
+        .friend-tasks {
+            margin-top: 20px;
+        }
+
+        .friend-tasks h4 {
+            color: #b0b0ff;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .friend-task-item {
+            padding: 10px;
+            margin-bottom: 8px;
+            background: rgba(20, 30, 60, 0.5);
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .friend-task-priority {
+            font-size: 0.8rem;
+            padding: 3px 10px;
+            border-radius: 15px;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* Feedback Page Styles */
+        .feedback-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(25, 40, 80, 0.7);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(100, 150, 255, 0.2);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: #b0b0ff;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid rgba(100, 150, 255, 0.3);
+            border-radius: 8px;
+            background: rgba(10, 15, 40, 0.7);
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        .form-group textarea {
+            min-height: 200px;
+            resize: vertical;
+        }
+
+        .rating {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            justify-content: center;
+        }
+
+        .star {
+            font-size: 2rem;
+            color: #f1c40f;
+            cursor: pointer;
+            transition: all 0.3s;
+            opacity: 0.5;
+        }
+
+        .star.active,
+        .star:hover {
+            opacity: 1;
+            transform: scale(1.2);
+        }
+
+        .feedback-container button[type="submit"] {
+            padding: 15px 30px;
+            background: linear-gradient(90deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+            width: 100%;
+        }
+
+        .feedback-container button[type="submit"]:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.6);
+        }
+
+        .thank-you-message {
+            display: none;
+            text-align: center;
+            padding: 30px;
+            background: rgba(25, 40, 80, 0.7);
+            border-radius: 15px;
+        }
+
+        .thank-you-message h2 {
+            color: #2ecc71;
+            margin-bottom: 15px;
+            font-size: 2rem;
+        }
+
+        .thank-you-message p {
+            font-size: 1.2rem;
+            color: #b0b0ff;
+        }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: rgba(25, 40, 80, 0.9);
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(100, 150, 255, 0.2);
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(231, 76, 60, 0.8);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .modal-close:hover {
+            background: rgba(231, 76, 60, 1);
+            transform: rotate(90deg);
+        }
+
+        .modal-title {
+            margin-bottom: 25px;
+            color: #fff;
+            font-size: 1.8rem;
+            text-align: center;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(100, 150, 255, 0.3);
+            border-radius: 8px;
+            background: rgba(10, 15, 40, 0.7);
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        .modal-button {
+            padding: 15px 30px;
+            background: linear-gradient(90deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+            margin-top: 15px;
+            width: 100%;
+        }
+
+        .modal-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.6);
+        }
+
+        .user-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .user-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: rgba(20, 30, 60, 0.5);
+            border-radius: 10px;
+            border: 1px solid rgba(100, 150, 255, 0.2);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3498db, #8e44ad);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .friend-status {
+            font-size: 0.9rem;
+            color: #b0b0ff;
+        }
+
+        .friend-status.friends {
+            color: #2ecc71;
+        }
+
+        .friend-actions button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .add-friend {
+            background: linear-gradient(90deg, #2ecc71, #27ae60);
+            color: white;
+        }
+
+        .remove-friend {
+            background: linear-gradient(90deg, #e74c3c, #c0392b);
+            color: white;
+        }
+
+        /* Task Selection Modal */
+        .task-select-list {
+            list-style: none;
+            margin-bottom: 25px;
+        }
+
+        .task-select-item {
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(100, 150, 255, 0.3);
+            margin-bottom: 10px;
+            transition: all 0.3s;
+            background: rgba(20, 30, 60, 0.5);
+        }
+
+        .task-select-item:hover {
+            background: rgba(30, 50, 100, 0.7);
+            transform: translateX(5px);
+        }
+
+        .task-select-item.selected {
+            background: linear-gradient(90deg, rgba(52, 152, 219, 0.7), transparent);
+            border-left: 4px solid #3498db;
+        }
+
+        .task-priority-label {
+            padding: 5px 12px;
+            border-radius: 15px;
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .navbar {
+                width: 70px;
+            }
+           
+            .navbar.expanded {
+                width: 200px;
+            }
+           
+            .main-content {
+                margin-left: 70px;
+                padding: 20px;
+            }
+           
+            .navbar.expanded ~ .main-content {
+                margin-left: 200px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+           
+            .navbar.expanded {
+                width: 100%;
+            }
+           
+            .container {
+                flex-direction: column;
+            }
+           
+            .main-content {
+                margin-left: 0;
+                margin-top: 70px;
+            }
+           
+            .navbar.expanded ~ .main-content {
+                margin-left: 0;
+            }
+           
+            .nav-links {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+           
+            .nav-item {
+                padding: 12px 15px;
+            }
+           
+            .navbar.expanded .nav-item {
+                justify-content: flex-start;
+            }
+           
+            .feature-card {
+                min-width: 100%;
+            }
+           
+            .progress-container {
+                flex-direction: column;
+            }
+
+            .notes-container {
+                flex-direction: column;
+            }
+
+            .friend-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Container -->
+    <div class="login-container">
+        <div class="login-box">
+            <h2>Welcome to Study Planner</h2>
+            <input type="text" id="username" placeholder="Enter your name">
+            <button id="login-btn">Continue</button>
+            <div class="user-select">
+                <label>Or select existing user:</label>
+                <select id="existing-users">
+                    <option value="">Select a user</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Vertical Navbar -->
+        <nav class="navbar">
+            <div class="nav-header">
+                <i class="fas fa-bars nav-icon" id="nav-toggle"></i>
+                <div class="user-profile" id="user-profile">U</div>
+            </div>
+            <ul class="nav-links">
+                <li class="nav-item active">
+                    <a href="#home">
+                        <i class="fas fa-home"></i>
+                        <span class="nav-text">Home</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#timer">
+                        <i class="fas fa-clock"></i>
+                        <span class="nav-text">Timer</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#progress">
+                        <i class="fas fa-chart-pie"></i>
+                        <span class="nav-text">Progress</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#tasks">
+                        <i class="fas fa-tasks"></i>
+                        <span class="nav-text">Tasks</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#history">
+                        <i class="fas fa-history"></i>
+                        <span class="nav-text">History</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#friends">
+                        <i class="fas fa-users"></i>
+                        <span class="nav-text">Friends</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#notes">
+                        <i class="fas fa-sticky-note"></i>
+                        <span class="nav-text">Notes</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#feedback">
+                        <i class="fas fa-comment-alt"></i>
+                        <span class="nav-text">Feedback</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Home Page -->
+            <section id="home" class="page active-page">
+                <h1>Study Hub</h1>
+                <h2>Welcome to Study Planner</h2>
+                <p>Organize your study schedule, track your progress, and achieve your academic goals!</p>
+                <div class="features">
+                    <div class="feature-card" onclick="document.querySelector('.nav-item a[href=\'#timer\']').parentElement.click()">
+                        <i class="fas fa-clock"></i>
+                        <h3>Study Timer</h3>
+                        <p>Track your study sessions with our built-in Pomodoro timer to maximize productivity.</p>
+                    </div>
+                    <div class="feature-card" onclick="document.querySelector('.nav-item a[href=\'#tasks\']').parentElement.click()">
+                        <i class="fas fa-tasks"></i>
+                        <h3>Task Management</h3>
+                        <p>Create, prioritize, and manage your study tasks efficiently with our task system.</p>
+                    </div>
+                    <div class="feature-card" onclick="document.querySelector('.nav-item a[href=\'#friends\']').parentElement.click()">
+                        <i class="fas fa-users"></i>
+                        <h3>Friends & Sharing</h3>
+                        <p>Connect with friends, share progress, and stay motivated together.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Timer Page -->
+            <section id="timer" class="page">
+                <h1>Study Timer</h1>
+                <div class="timer-container">
+                    <div class="current-task">Current Task: <strong id="current-task-display">Select a task to start</strong></div>
+                    <div class="timer-display">25:00</div>
+                    <div class="timer-controls">
+                        <button id="start-timer">Start</button>
+                        <button id="pause-timer">Pause</button>
+                        <button id="reset-timer">Reset</button>
+                    </div>
+                    <div class="pause-controls">
+                        <button id="take-notes-btn">Take Notes</button>
+                        <button id="switch-task-btn">Switch Task</button>
+                    </div>
+                    <div class="timer-settings">
+                        <label for="study-time">Study Time (minutes):</label>
+                        <input type="number" id="study-time" value="25" min="1">
+                        <label for="break-time">Break Time (minutes):</label>
+                        <input type="number" id="break-time" value="5" min="1">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Progress Page -->
+            <section id="progress" class="page">
+                <h1>Your Progress</h1>
+                <div class="progress-container">
+                    <div class="progress-chart-container">
+                        <h3>Current Session Progress</h3>
+                        <div class="clock-visualization">
+                            <div class="clock-circle">
+                                <div class="clock-progress" id="clock-progress"></div>
+                                <div class="clock-progress-fill" id="clock-progress-fill"></div>
+                                <div class="clock-inner" id="clock-text">25:00</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="progress-stats">
+                        <div class="stat-card">
+                            <h3>Total Study Time</h3>
+                            <p class="stat-value" id="total-study-time">0 hours</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Sessions Completed</h3>
+                            <p class="stat-value" id="sessions-completed">0</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Tasks Completed</h3>
+                            <p class="stat-value" id="tasks-completed">0</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tasks Page -->
+            <section id="tasks" class="page">
+                <h1>Your Tasks</h1>
+                <div class="task-container">
+                    <div class="task-form">
+                        <input type="text" id="new-task" placeholder="Add a new task...">
+                        <button id="add-task">Add Task</button>
+                        <select id="task-priority">
+                            <option value="low">Low Priority</option>
+                            <option value="medium" selected>Medium Priority</option>
+                            <option value="high">High Priority</option>
+                        </select>
+                    </div>
+                    <div class="task-list">
+                        <h3>Pending Tasks</h3>
+                        <ul id="pending-tasks"></ul>
+                        <h3>Completed Tasks</h3>
+                        <ul id="completed-tasks"></ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- History Page -->
+            <section id="history" class="page">
+                <h1>Study History</h1>
+                <div class="history-container">
+                    <div class="history-list" id="history-list"></div>
+                </div>
+            </section>
+
+            <!-- Friends Page -->
+            <section id="friends" class="page">
+                <h1>Friends</h1>
+                <div class="friends-container">
+                    <button class="manage-friends" id="manage-friends">
+                        <i class="fas fa-user-plus"></i> Manage Friends
+                    </button>
+                    <div class="friend-list" id="friend-list"></div>
+                </div>
+            </section>
+
+            <!-- Notes Page -->
+            <section id="notes" class="page">
+                <h1>Your Notes</h1>
+                <div class="notes-container">
+                    <div class="notes-form">
+                        <input type="text" id="note-title" placeholder="Note title...">
+                        <textarea id="note-content" placeholder="Write your note here..."></textarea>
+                        <button id="save-note">Save Note</button>
+                    </div>
+                    <div class="notes-list" id="notes-list"></div>
+                </div>
+            </section>
+
+            <!-- Feedback Page -->
+            <section id="feedback" class="page">
+                <h1>Feedback</h1>
+                <div class="feedback-container">
+                    <form id="feedback-form">
+                        <div class="form-group">
+                            <label for="feedback-name">Your Name:</label>
+                            <input type="text" id="feedback-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="feedback-email">Your Email:</label>
+                            <input type="email" id="feedback-email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="feedback-message">Your Feedback:</label>
+                            <textarea id="feedback-message" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="feedback-rating">Rating:</label>
+                            <div class="rating">
+                                <span class="star" data-value="1">★</span>
+                                <span class="star" data-value="2">★</span>
+                                <span class="star" data-value="3">★</span>
+                                <span class="star" data-value="4">★</span>
+                                <span class="star" data-value="5">★</span>
+                            </div>
+                            <input type="hidden" id="feedback-rating" value="0">
+                        </div>
+                        <button type="submit">Submit Feedback</button>
+                    </form>
+                    <div class="thank-you-message">
+                        <h2>Thank you for your feedback!</h2>
+                        <p>We appreciate you taking the time to help us improve.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- User Management Modal -->
+    <div class="modal-overlay" id="user-management-modal" style="display:none;">
+        <div class="modal-content">
+            <button class="modal-close" id="close-user-management">&times;</button>
+            <h2 class="modal-title">Manage Friends</h2>
+            <input type="text" id="friend-username" class="modal-input" placeholder="Enter friend's username">
+            <button class="modal-button" id="add-friend-btn">Add Friend</button>
+            <div class="user-list" id="user-list"></div>
+        </div>
+    </div>
+
+    <!-- Task Selection Modal -->
+    <div class="modal-overlay" id="task-selection-modal" style="display:none;">
+        <div class="modal-content">
+            <button class="modal-close" id="close-task-selection">&times;</button>
+            <h2 class="modal-title">Select a Task</h2>
+            <ul class="task-select-list" id="task-select-list"></ul>
+        </div>
+    </div>
+
+    <script>
+        // Variables
+        let currentUser = null;
+        let users = JSON.parse(localStorage.getItem('studyPlannerUsers')) || {};
+        let friends = JSON.parse(localStorage.getItem('studyPlannerFriends')) || {};
+        let studyHistory = JSON.parse(localStorage.getItem('studyPlannerHistory')) || {};
+
+        // DOM Elements
+        const loginContainer = document.querySelector('.login-container');
+        const loginBtn = document.getElementById('login-btn');
+        const usernameInput = document.getElementById('username');
+        const existingUsersSelect = document.getElementById('existing-users');
+        const userProfile = document.getElementById('user-profile');
+        const userManagementModal = document.getElementById('user-management-modal');
+        const manageFriendsBtn = document.getElementById('manage-friends');
+        const closeUserManagementBtn = document.getElementById('close-user-management');
+        const addFriendBtn = document.getElementById('add-friend-btn');
+        const friendUsernameInput = document.getElementById('friend-username');
+        const userList = document.getElementById('user-list');
+        const friendList = document.getElementById('friend-list');
+
+        const currentTaskDisplay = document.getElementById('current-task-display');
+
+        // Timer elements
+        const timerDisplay = document.querySelector('.timer-display');
+        const startBtn = document.getElementById('start-timer');
+        const pauseBtn = document.getElementById('pause-timer');
+        const resetBtn = document.getElementById('reset-timer');
+        const studyTimeInput = document.getElementById('study-time');
+        const breakTimeInput = document.getElementById('break-time');
+        const clockText = document.getElementById('clock-text');
+        const clockProgress = document.getElementById('clock-progress');
+        const clockProgressFill = document.getElementById('clock-progress-fill');
+
+        const pauseControls = document.querySelector('.pause-controls');
+        const takeNotesBtn = document.getElementById('take-notes-btn');
+        const switchTaskBtn = document.getElementById('switch-task-btn');
+        const taskSelectionModal = document.getElementById('task-selection-modal');
+        const taskSelectList = document.getElementById('task-select-list');
+        const closeTaskSelectionBtn = document.getElementById('close-task-selection');
+
+        // Notes elements
+        const notesList = document.getElementById('notes-list');
+        const saveNoteBtn = document.getElementById('save-note');
+        const noteTitleInput = document.getElementById('note-title');
+        const noteContentInput = document.getElementById('note-content');
+
+        // Feedback elements
+        const feedbackForm = document.getElementById('feedback-form');
+        const stars = document.querySelectorAll('.star');
+        const ratingInput = document.getElementById('feedback-rating');
+        const thankYouMessage = document.querySelector('.thank-you-message');
+
+        // Timer state for tasks
+        let currentTaskId = null; // Current active task id
+        const taskTimers = {}; // Stores { timeLeft, isRunning, isStudyTime, totalSessionTime, startTime } per task id
+        let timer = null;
+        let isRunning = false;
+
+        // Initialize existing users dropdown
+        function initExistingUsers() {
+            existingUsersSelect.innerHTML = '<option value="">Select a user</option>';
+            Object.keys(users).forEach((username) => {
+                const option = document.createElement('option');
+                option.value = username;
+                option.textContent = username;
+                existingUsersSelect.appendChild(option);
+            });
+        }
+
+        // Login functionality
+        loginBtn.addEventListener('click', () => {
+            const username = usernameInput.value.trim();
+            if (username) {
+                loginUser(username);
+            }
+        });
+
+        existingUsersSelect.addEventListener('change', (e) => {
+            if (e.target.value) {
+                loginUser(e.target.value);
+            }
+        });
+
+        function loginUser(username) {
+            if (!users[username]) {
+                users[username] = {
+                    username,
+                    tasks: [],
+                    notes: [],
+                    studyStats: {
+                        totalStudyTime: 0,
+                        sessionsCompleted: 0,
+                        tasksCompleted: 0,
+                    },
+                };
+                localStorage.setItem('studyPlannerUsers', JSON.stringify(users));
+
+                if (!friends[username]) {
+                    friends[username] = [];
+                    localStorage.setItem('studyPlannerFriends', JSON.stringify(friends));
+                }
+
+                if (!studyHistory[username]) {
+                    studyHistory[username] = [];
+                    localStorage.setItem('studyPlannerHistory', JSON.stringify(studyHistory));
+                }
+            }
+
+            currentUser = username;
+            userProfile.textContent = username.charAt(0).toUpperCase();
+            loginContainer.style.display = 'none';
+            initExistingUsers();
+
+            loadUserData();
+            initializeTimerForUser();
+        }
+
+        // Navigation functionality
+        const navItems = document.querySelectorAll('.nav-item');
+        const pages = document.querySelectorAll('.page');
+
+        navItems.forEach((item) => {
+            item.addEventListener('click', function () {
+                navItems.forEach((navItem) => navItem.classList.remove('active'));
+                this.classList.add('active');
+                pages.forEach((page) => page.classList.remove('active-page'));
+                const targetPage = this.querySelector('a').getAttribute('href');
+                document.querySelector(targetPage).classList.add('active-page');
+                // Hide pause controls if navigating away from timer
+                if (targetPage !== '#timer') {
+                    togglePauseControls(false);
+                    pauseTimer();
+                }
+            });
+        });
+
+        // Toggle navbar width
+        document.getElementById('nav-toggle').addEventListener('click', () => {
+            document.querySelector('.navbar').classList.toggle('expanded');
+        });
+
+        // Load user data
+        function loadUserData() {
+            if (!currentUser) return;
+            const user = users[currentUser];
+
+            // Load stats
+            updateStats();
+
+            // Load tasks
+            loadTasks();
+
+            // Load notes
+            loadNotes();
+
+            // Load history
+            loadHistory();
+
+            // Load friends
+            loadFriends();
+
+            // Initialize progress chart or clock visualization with 0 progress
+            updateClockVisualization(0);
+        }
+
+        // --- Task management ---
+
+        function loadTasks() {
+            if (!currentUser) return;
+            const pendingTasksList = document.getElementById('pending-tasks');
+            const completedTasksList = document.getElementById('completed-tasks');
+
+            pendingTasksList.innerHTML = '';
+            completedTasksList.innerHTML = '';
+
+            const tasks = users[currentUser].tasks;
+            if (!tasks) return;
+
+            tasks.forEach((task) => {
+                const taskItem = createTaskElement(task);
+                if (task.completed) {
+                    completedTasksList.appendChild(taskItem);
+                } else {
+                    pendingTasksList.appendChild(taskItem);
+                }
+            });
+        }
+
+        // Create task element (overridden later to add custom study time editing)
+        function createTaskElement(task) {
+            const taskItem = document.createElement('li');
+            taskItem.className = 'task-item';
+            taskItem.dataset.id = task.id;
+
+            const priorityClass = `priority-${task.priority}`;
+
+            taskItem.innerHTML = `
+                <div class="task-info">
+                    <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''}>
+                    <span class="task-text ${task.completed ? 'completed' : ''}">${task.text}</span>
+                    <span class="task-priority ${priorityClass}">${task.priority}</span>
+                </div>
+                <div class="task-actions">
+                    <button class="start-task">Start Task</button>
+                    <button class="edit-task">Edit</button>
+                    <button class="delete-task">Delete</button>
+                </div>
+            `;
+
+            const checkbox = taskItem.querySelector('.task-checkbox');
+            const startBtn = taskItem.querySelector('.start-task');
+            const editBtn = taskItem.querySelector('.edit-task');
+            const deleteBtn = taskItem.querySelector('.delete-task');
+
+            checkbox.addEventListener('change', function () {
+                const taskId = taskItem.dataset.id;
+                const task = users[currentUser].tasks.find((t) => t.id === taskId);
+                if (task) {
+                    task.completed = this.checked;
+                    if (this.checked) {
+                        users[currentUser].studyStats.tasksCompleted++;
+                    } else {
+                        users[currentUser].studyStats.tasksCompleted--;
+                    }
+                    localStorage.setItem('studyPlannerUsers', JSON.stringify(users));
+                    loadTasks();
+                    updateStats();
+                }
+            });
+
+            startBtn.addEventListener('click', function () {
+                const taskId = taskItem.dataset.id;
+                const task = users[currentUser].tasks.find((t) => t.id === taskId);
+                if (task) {
+                    currentTaskId = task.id;
+                    currentTaskDisplay.textContent = `Currently working on: ${task.text}`;
+                    document
+                        .querySelector('.nav-item a[href="#timer"]')
+                        .parentElement.click();
+
+                    // Reset or initialize timer state for this task
+                    if (!taskTimers[currentTaskId]) {
+                        const taskStudyTime = task.studyTime || getGlobalStudyTime();
+                        taskTimers[currentTaskId] = {
+                            timeLeft: taskStudyTime * 60,
+                            isRunning: false,
+                            isStudyTime: true,
+                            totalSessionTime: taskStudyTime * 60,
+                            startTime: null,
+                        };
+                    }
+
+                    resetTimer();
+                    startTimer();
+                }
+            });
+
+            editBtn.addEventListener('click', () => {
+                const taskId = taskItem.dataset.id;
+                const task = users[currentUser].tasks.find((t) => t.id === taskId);
+                if (!task) return;
+
+                const newText = prompt('Edit your task:', task.text);
+                if (newText === null || newText.trim() === '') return;
+
+                // Prompt for custom study time
+                let newStudyTime = prompt(
+                    'Set custom study time in minutes (leave blank for default 25):',
+                    task.studyTime || ''
+                );
+                if (newStudyTime !== null) {
+                    newStudyTime = newStudyTime.trim();
+                    if (newStudyTime !== '') {
+                        const parsed = parseInt(newStudyTime, 10);
+                        if (isNaN(parsed) || parsed < 1) {
+                            alert('Invalid study time, must be a positive number.');
+                            return;
+                        }
+                        task.studyTime = parsed;
+                    } else {
+                        delete task.studyTime;
+                    }
+                }
+
+                task.text = newText.trim();
+                localStorage.setItem('studyPlannerUsers', JSON.stringify(users));
+
+                // Update runtime timer state for task if exists
+                if (taskTimers[task.id]) {
+                    const studyTimeMin = task.studyTime || getGlobalStudyTime();
+                    taskTimers[task.id].totalSessionTime = studyTimeMin * 60;
+                    if (!taskTimers[task.id].isRunning) {
+                        taskTimers[task.id].timeLeft = studyTimeMin * 60;
+                    }
+                }
+
+                loadTasks();
+
+                if (task.id === currentTaskId && !isRunning) resetTimer();
+            });
+
+            deleteBtn.addEventListener('click', () => {
+                if (confirm('Are you sure you want to delete this task?')) {
+                    const taskId = taskItem.dataset.id;
+                    users[currentUser].tasks = users[currentUser].tasks.filter(
+                        (t) => t.id !== taskId
+                    );
+                    localStorage.setItem('studyPlannerUsers', JSON.stringify(users));
+                    loadTasks();
+
+                    // If deleted task was currentTaskId, clear timer display
+                    if (currentTaskId === taskId) {
+                        currentTaskId = null;
+                        currentTaskDisplay.textContent = 'Select a task to start';
+                        resetTimer();
+                    }
+                }
+            });
+
+            return taskItem;
+        }
+
+        // Add new task (with optional custom study time)
+        function addTask() {
+            const taskText = document.getElementById('new-task').value.trim();
+            const priority = document.getElementById('task-priority').value;
+            if (!taskText) return;
+
+            let customStudyTime = prompt(
+                'Set custom study time in minutes for this task (or leave blank for default 25):',
+                ''
+            );
+            let studyTimeValue = null;
+            if (customStudyTime !== null) {
+                customStudyTime = customStudyTime.trim();
+                if (customStudyTime !== '') {
+                    const parsed = parseInt(customStudyTime, 10);
+                    if (isNaN(parsed) || parsed < 1) {
+                        alert('Invalid input! Using default study time.');
+                    } else {
+                        studyTimeValue = parsed;
+                    }
+                }
+            }
+
+            const newTask = {
+                id: Date.now().toString(),
+                text: taskText,
+                priority,
+                completed: false,
+                createdAt: new Date().toISOString(),
+            };
+
+            if (studyTimeValue) {
+                newTask.studyTime = studyTimeValue;
+            }
+
+            users[currentUser].tasks.push(newTask);
+            localStorage.setItem('studyPlannerUsers', JSON.stringify(users));
+            loadTasks();
+            document.getElementById('new-task').value = '';
+        }
+
+        document.getElementById('add-task').addEventListener('click', addTask);
+        document.getElementById('new-task').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                addTask();
+            }
+        });
+
+        // --- Timer related functions ---
+
+        function getGlobalStudyTime() {
+            return parseInt(studyTimeInput.value) || 25;
+        }
+        function getGlobalBreakTime() {
+            return parseInt(breakTimeInput.value) || 5;
+        }
+
+        // Format seconds as mm:ss
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60)
+                .toString()
+                .padStart(2, '0');
+            const secs = (seconds % 60).toString().padStart(2, '0');
+            return `${mins}:${secs}`;
+        }
+
+        // Update timer display for given time left and total session time
+        function updateDisplayCustom(timeLeftSec, totalSec) {
+            const displayTime = formatTime(timeLeftSec);
+            timerDisplay.textContent = displayTime;
+            clockText.textContent = displayTime;
+
+            const progress = ((totalSec - timeLeftSec) / totalSec) * 360;
+            updateClockVisualization(progress);
+        }
+
+        // Update clock visualization rotation
+        function updateClockVisualization(progress) {
+            if (progress <= 180) {
+                clockProgress.style.transform = `rotate(${progress}deg)`;
+                clockProgressFill.style.transform = 'rotate(0deg)';
+            } else {
+                clockProgress.style.transform = `rotate(180deg)`;
+                clockProgressFill.style.transform = `rotate(${progress - 180}deg)`;
+            }
+        }
+
+        // Start timer for current task
+        function startTimer() {
+            if (currentTaskId === null) {
+                alert('Please start a task first.');
+                return;
+            }
+            if (taskTimers[currentTaskId] && taskTimers[currentTaskId].isRunning) {
+                return; // already running
+            }
+
+            if (!taskTimers[currentTaskId]) {
+                const task = users[currentUser].tasks.find((t) => t.id === currentTaskId);
+                const taskStudyTime = (task && task.studyTime) || getGlobalStudyTime();
+                taskTimers[currentTaskId] = {
+                    timeLeft: taskStudyTime * 60,
+                    isRunning: false,
+                    isStudyTime: true,
+                    totalSessionTime: taskStudyTime * 60,
+                    startTime: null,
+                };
+            }
+
+            isRunning = true;
+            taskTimers[currentTaskId].isRunning = true;
+            taskTimers[currentTaskId].startTime = new Date();
+
+            togglePauseControls(false);
+
+            timer = setInterval(() => {
+                taskTimers[currentTaskId].timeLeft--;
+                updateDisplayCustom(
+                    taskTimers[currentTaskId].timeLeft,
+                    taskTimers[currentTaskId].totalSessionTime
+                );
+
+                if (taskTimers[currentTaskId].timeLeft <= 0) {
+                    clearInterval(timer);
+                    isRunning = false;
+                    taskTimers[currentTaskId].isRunning = false;
+
+                    const endTime = new Date();
+                    const startTimeTask = taskTimers[currentTaskId].startTime;
+                    const sessionDuration = Math.floor((endTime - startTimeTask) / 1000);
+
+                    if (!studyHistory[currentUser]) studyHistory[currentUser] = [];
+                    const task = users[currentUser].tasks.find((t) => t.id === currentTaskId);
+
+                    studyHistory[currentUser].push({
+                        task: task ? task.text : 'No specific task',
+                        startTime: startTimeTask.toISOString(),
+                        endTime: endTime.toISOString(),
+                        duration: sessionDuration,
+                    });
+                    localStorage.setItem('studyPlannerHistory', JSON.stringify(studyHistory));
+
+                    users[currentUser].studyStats.totalStudyTime += sessionDuration;
+                    users[currentUser].studyStats.sessionsCompleted++;
+                    localStorage.setItem('studyPlannerUsers', JSON.stringify(users));
+                    updateStats();
+                    loadHistory();
+
+                    // Switch between study and break
+                    if (taskTimers[currentTaskId].isStudyTime) {
+                        taskTimers[currentTaskId].isStudyTime = false;
+                        taskTimers[currentTaskId].timeLeft = getGlobalBreakTime() * 60;
+                        taskTimers[currentTaskId].totalSessionTime = taskTimers[currentTaskId].timeLeft;
+                        alert('Study session complete! Time for a break.');
+                    } else {
+                        taskTimers[currentTaskId].isStudyTime = true;
+                        const newStudyTime = (task && task.studyTime) || getGlobalStudyTime();
+                        taskTimers[currentTaskId].timeLeft = newStudyTime * 60;
+                        taskTimers[currentTaskId].totalSessionTime = taskTimers[currentTaskId].timeLeft;
+                        alert('Break over! Time to get back to studying.');
+                    }
+
+                    updateDisplayCustom(
+                        taskTimers[currentTaskId].timeLeft,
+                        taskTimers[currentTaskId].totalSessionTime
+                    );
+                }
+            }, 1000);
+        }
+
+        // Pause timer and show pause controls
+        function pauseTimer() {
+            clearInterval(timer);
+            if (currentTaskId && taskTimers[currentTaskId]) {
+                taskTimers[currentTaskId].isRunning = false;
+            }
+            isRunning = false;
+            togglePauseControls(true);
+        }
+
+        // Reset timer for current task
+        function resetTimer() {
+            pauseTimer();
+            if (currentTaskId) {
+                const task = users[currentUser].tasks.find((t) => t.id === currentTaskId);
+                const taskStudyTime = (task && task.studyTime) || getGlobalStudyTime();
+                if (!taskTimers[currentTaskId]) {
+                    taskTimers[currentTaskId] = {};
+                }
+                taskTimers[currentTaskId].timeLeft = taskStudyTime * 60;
+                taskTimers[currentTaskId].totalSessionTime = taskTimers[currentTaskId].timeLeft;
+                taskTimers[currentTaskId].isStudyTime = true;
+                updateDisplayCustom(taskTimers[currentTaskId].timeLeft, taskTimers[currentTaskId].totalSessionTime);
+            } else {
+                // fallback to global default
+                updateDisplayCustom(getGlobalStudyTime() * 60, getGlobalStudyTime() * 60);
+            }
+            togglePauseControls(false);
+        }
+
+        // Show or hide pause controls
+        function togglePauseControls(show) {
+            pauseControls.style.display = show ? 'block' : 'none';
+        }
+
+        // Update global study & break time inputs
+        studyTimeInput.addEventListener('change', () => {
+            if (
+                !isRunning &&
+                currentTaskId &&
+                taskTimers[currentTaskId] &&
+                taskTimers[currentTaskId].isStudyTime
+            ) {
+                const task = users[currentUser].tasks.find((t) => t.id === currentTaskId);
+                const newTime = (task && task.studyTime) || getGlobalStudyTime();
+                taskTimers[currentTaskId].timeLeft = newTime * 60;
+                taskTimers[currentTaskId].totalSessionTime = taskTimers[currentTaskId].timeLeft;
+                updateDisplayCustom(taskTimers[currentTaskId].timeLeft, taskTimers[currentTaskId].totalSessionTime);
+            }
+        });
+
+        breakTimeInput.addEventListener('change', () => {
+            if (
+                !isRunning &&
+                currentTaskId &&
+                taskTimers[currentTaskId] &&
+                !taskTimers[currentTaskId].isStudyTime
+            ) {
+                const newTime = getGlobalBreakTime();
+                taskTimers[currentTaskId].timeLeft = newTime * 60;
+                taskTimers[currentTaskId].totalSessionTime = taskTimers[currentTaskId].timeLeft;
+                updateDisplayCustom(taskTimers[currentTaskId].timeLeft, taskTimers[currentTaskId].totalSessionTime);
+            }
+        });
+
+        // Take Notes button navigates to notes page
+        takeNotesBtn.addEventListener('click', () => {
+            document.querySelector('.nav-item.active').classList.remove('active');
+            document.querySelector('.nav-item a[href="#notes"]').parentElement.classList.add('active');
+            pages.forEach((page) => page.classList.remove('active-page'));
+            document.getElementById('notes').classList.add('active-page');
+            togglePauseControls(false);
+        });
+
+        // Switch Task button opens task modal
+        switchTaskBtn.addEventListener('click', () => {
+            populateTaskSelectionModal();
+            taskSelectionModal.style.display = 'flex';
+            togglePauseControls(false);
+        });
+
+        // Close task modal
+        closeTaskSelectionBtn.addEventListener('click', () => {
+            taskSelectionModal.style.display = 'none';
+        });
+
+        function populateTaskSelectionModal() {
+            taskSelectList.innerHTML = '';
+            const tasks = users[currentUser].tasks;
+            if (!tasks || tasks.length === 0) {
+                taskSelectList.innerHTML = '<p>No tasks available.</p>';
+                return;
+            }
+
+            tasks.forEach((task) => {
+                const li = document.createElement('li');
+                li.className = 'task-select-item';
+                if (task.id === currentTaskId) {
+                    li.classList.add('selected');
+                }
+                li.dataset.taskId = task.id;
+
+                li.innerHTML = `
+                    <span>${task.text}</span>
+                    <span class="task-priority-label priority-${task.priority}">${task.priority}</span>
+                `;
+
+                li.addEventListener('click', () => {
+                    if (task.id === currentTaskId) {
+                        taskSelectionModal.style.display = 'none';
+                        return;
+                    }
+
+                    // Pause current running timer
+                    if (isRunning) {
+                        pauseTimer();
+                    }
+
+                    currentTaskId = task.id;
+                    currentTaskDisplay.textContent = `Currently working on: ${task.text}`;
+
+                    if (!taskTimers[currentTaskId]) {
+                        const studyTime = task.studyTime || getGlobalStudyTime();
+                        taskTimers[currentTaskId] = {
+                            timeLeft: studyTime * 60,
+                            isRunning: false,
+                            isStudyTime: true,
+                            totalSessionTime: studyTime * 60,
+                            startTime: null,
+                        };
+                    }
+
+                    updateDisplayCustom(
+                        taskTimers[currentTaskId].timeLeft,
+                        taskTimers[currentTaskId].totalSessionTime
+                    );
+
+                    document.querySelectorAll('.task-select-item').forEach((item) =>
+                        item.classList.remove('selected')
+                    );
+                    li.classList.add('selected');
+
+                    taskSelectionModal.style.display = 'none';
+                });
+
+                taskSelectList.appendChild(li);
+            });
+        }
+
+        // --- Notes functionality ---
+
+        function loadNotes() {
+            if (!currentUser) return;
+            const notes = users[currentUser].notes || [];
+            notesList.innerHTML = '';
+
+            notes.forEach((note) => {
+                const noteCard = document.createElement('div');
+                noteCard.className = 'note-card';
+                noteCard.dataset.id = note.id;
+
+                noteCard.innerHTML = `
+                    <h3>${note.title}</h3>
+                    <p>${note.content}</p>
+                    <div class="note-actions">
+                        <button class="edit-note">Edit</button>
+                        <button class="delete-note">Delete</button>
+                    </div>
+                `;
+
+                const editBtn = noteCard.querySelector('.edit-note');
+                const deleteBtn = noteCard.querySelector('.delete-note');
+
+                editBtn.addEventListener('click', () => {
+                    const noteId = noteCard.dataset.id;
+                    const note = users[currentUser].notes.find((n) => n.id === noteId);
+                    if (!note) return;
+                    const newTitle = prompt('Edit note title:', note.title);
+                    const newContent = prompt('Edit note content:', note.content);
+                    if (newTitle !== null && newContent !== null) {
+                        note.title = newTitle;
+                        note.content = newContent;
+                        localStorage.setItem('studyPlannerUsers', JSON.stringify(users));
+                        loadNotes();
+                    }
+                });
+
+                deleteBtn.addEventListener('click', () => {
+                    if (confirm('Are you sure you want to delete this note?')) {
+                        const noteId = noteCard.dataset.id;
+                        users[currentUser].notes = users[currentUser].notes.filter((n) => n.id !== noteId);
+                        localStorage.setItem('studyPlannerUsers', JSON.stringify(users));
+                        loadNotes();
+                    }
+                });
+
+                notesList.appendChild(noteCard);
+            });
+        }
+
+        saveNoteBtn.addEventListener('click', () => {
+            const title = noteTitleInput.value.trim();
+            const content = noteContentInput.value.trim();
+            if (!title || !content) return alert('Please enter title and content for the note.');
+
+            const newNote = {
+                id: Date.now().toString(),
+                title,
+                content,
+                createdAt: new Date().toISOString(),
+            };
+
+            if (!users[currentUser].notes) users[currentUser].notes = [];
+            users[currentUser].notes.push(newNote);
+            localStorage.setItem('studyPlannerUsers', JSON.stringify(users));
+            loadNotes();
+
+            noteTitleInput.value = '';
+            noteContentInput.value = '';
+        });
+
+        // --- History functionality ---
+
+        function loadHistory() {
+            if (!currentUser) return;
+            const historyList = document.getElementById('history-list');
+            historyList.innerHTML = '';
+
+            if (!studyHistory[currentUser] || studyHistory[currentUser].length === 0) {
+                historyList.innerHTML = '<p>No study history recorded yet.</p>';
+                return;
+            }
+
+            const sortedHistory = [...studyHistory[currentUser]].sort(
+                (a, b) => new Date(b.endTime) - new Date(a.endTime)
+            );
+
+            sortedHistory.forEach((entry) => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+
+                const start = new Date(entry.startTime);
+                const end = new Date(entry.endTime);
+                const duration = Math.floor((end - start) / 60000);
+
+                historyItem.innerHTML = `
+                    <div class="history-info">
+                        <div class="history-task">${entry.task || 'No specific task'}</div>
+                        <div class="history-duration">Duration: ${duration} minutes</div>
+                    </div>
+                    <div class="history-date">${start.toLocaleDateString()}</div>
+                `;
+
+                historyList.appendChild(historyItem);
+            });
+        }
+
+        // --- Friends functionality ---
+
+        userProfile.addEventListener('click', () => {
+            userManagementModal.style.display = 'flex';
+            populateUserList();
+        });
+
+        manageFriendsBtn.addEventListener('click', () => {
+            userManagementModal.style.display = 'flex';
+            populateUserList();
+        });
+
+        closeUserManagementBtn.addEventListener('click', () => {
+            userManagementModal.style.display = 'none';
+        });
+
+        addFriendBtn.addEventListener('click', () => {
+            const friendUsername = friendUsernameInput.value.trim();
+            if (!friendUsername) return alert('Enter a username.');
+            if (friendUsername === currentUser) return alert('Cannot add yourself.');
+            if (!users[friendUsername]) return alert('User does not exist.');
+
+            if (!friends[currentUser]) friends[currentUser] = [];
+
+            if (friends[currentUser].includes(friendUsername)) {
+                alert(`${friendUsername} is already in your friends list.`);
+                return;
+            }
+
+            friends[currentUser].push(friendUsername);
+            localStorage.setItem('studyPlannerFriends', JSON.stringify(friends));
+            friendUsernameInput.value = '';
+            populateUserList();
+            loadFriends();
+        });
+
+        function populateUserList() {
+            userList.innerHTML = '';
+            Object.keys(users).forEach((username) => {
+                if (username === currentUser) return;
+
+                const isFriend = friends[currentUser] && friends[currentUser].includes(username);
+
+                const userItem = document.createElement('div');
+                userItem.className = 'user-item';
+
+                userItem.innerHTML = `
+                    <div class="user-info">
+                        <div class="user-avatar">${username.charAt(0).toUpperCase()}</div>
+                        <div>
+                            <div>${username}</div>
+                            <div class="friend-status ${isFriend ? 'friends' : ''}">${isFriend ? 'Friends' : 'Not Friends'}</div>
+                        </div>
+                    </div>
+                    <div class="friend-actions">
+                        ${
+                            isFriend
+                                ? `<button class="remove-friend" data-username="${username}">Remove</button>`
+                                : `<button class="add-friend" data-username="${username}">Add</button>`
+                        }
+                    </div>
+                `;
+
+                userList.appendChild(userItem);
+            });
+
+            document.querySelectorAll('.add-friend').forEach((btn) => {
+                btn.addEventListener('click', (e) => {
+                    const username = e.target.dataset.username;
+                    if (!friends[currentUser].includes(username)) {
+                        friends[currentUser].push(username);
+                        localStorage.setItem('studyPlannerFriends', JSON.stringify(friends));
+                        populateUserList();
+                        loadFriends();
+                    }
+                });
+            });
+
+            document.querySelectorAll('.remove-friend').forEach((btn) => {
+                btn.addEventListener('click', (e) => {
+                    const username = e.target.dataset.username;
+                    friends[currentUser] = friends[currentUser].filter((u) => u !== username);
+                    localStorage.setItem('studyPlannerFriends', JSON.stringify(friends));
+                    populateUserList();
+                    loadFriends();
+                });
+            });
+        }
+
+        function loadFriends() {
+            friendList.innerHTML = '';
+
+            if (!friends[currentUser] || friends[currentUser].length === 0) {
+                friendList.innerHTML = '<p>No friends added yet. Click "Manage Friends" to add some.</p>';
+                return;
+            }
+
+            friends[currentUser].forEach((friend) => {
+                if (!users[friend]) return;
+
+                const friendCard = document.createElement('div');
+                friendCard.className = 'friend-card';
+
+                const activeTasks = users[friend].tasks
+                    .filter((t) => !t.completed)
+                    .slice(0, 3)
+                    .map(
+                        (task) => `
+                        <div class="friend-task-item">
+                            ${task.text}
+                            <span class="friend-task-priority priority-${task.priority}">${task.priority}</span>
+                        </div>`
+                    )
+                    .join('');
+
+                friendCard.innerHTML = `
+                    <div class="friend-avatar">${friend.charAt(0).toUpperCase()}</div>
+                    <h3>${friend}</h3>
+                    <div class="friend-tasks">
+                        <h4>Current Tasks:</h4>
+                        ${activeTasks || '<p>No active tasks</p>'}
+                    </div>
+                `;
+
+                friendList.appendChild(friendCard);
+            });
+        }
+
+        // --- Update stats display ---
+        function updateStats() {
+            if (!currentUser) return;
+            const user = users[currentUser];
+            const totalMinutes = Math.floor(user.studyStats.totalStudyTime / 60);
+            const hours = Math.floor(totalMinutes / 60);
+            const minutes = totalMinutes % 60;
+            document.getElementById('total-study-time').textContent = `${hours} hours ${minutes} minutes`;
+            document.getElementById('sessions-completed').textContent = user.studyStats.sessionsCompleted;
+            document.getElementById('tasks-completed').textContent = user.studyStats.tasksCompleted;
+        }
+
+        // --- Initialize timer when user logs in or reloads ---
+        function initializeTimerForUser() {
+            if (!currentUser) return;
+            if (!users[currentUser].tasks || users[currentUser].tasks.length === 0) {
+                currentTaskId = null;
+                currentTaskDisplay.textContent = 'Select a task to start';
+                resetTimer();
+                return;
+            }
+
+            if (!currentTaskId || !users[currentUser].tasks.find((t) => t.id === currentTaskId)) {
+                let firstTask = users[currentUser].tasks.find((t) => !t.completed);
+                if (!firstTask) firstTask = users[currentUser].tasks[0];
+
+                currentTaskId = firstTask.id;
+                currentTaskDisplay.textContent = `Currently working on: ${firstTask.text}`;
+            }
+
+            if (!taskTimers[currentTaskId]) {
+                const task = users[currentUser].tasks.find((t) => t.id === currentTaskId);
+                const taskStudyTime = (task && task.studyTime) || getGlobalStudyTime();
+                taskTimers[currentTaskId] = {
+                    timeLeft: taskStudyTime * 60,
+                    isRunning: false,
+                    isStudyTime: true,
+                    totalSessionTime: taskStudyTime * 60,
+                    startTime: null,
+                };
+            }
+
+            updateDisplayCustom(
+                taskTimers[currentTaskId].timeLeft,
+                taskTimers[currentTaskId].totalSessionTime
+            );
+            togglePauseControls(false);
+        }
+
+        // Bind buttons
+        startBtn.addEventListener('click', startTimer);
+        pauseBtn.addEventListener('click', pauseTimer);
+        resetBtn.addEventListener('click', resetTimer);
+
+        // --- Feedback functionality ---
+
+        stars.forEach((star) => {
+            star.addEventListener('click', function () {
+                const value = parseInt(this.getAttribute('data-value'));
+                ratingInput.value = value;
+
+                stars.forEach((s) => {
+                    s.classList.remove('active');
+                    if (parseInt(s.getAttribute('data-value')) <= value) {
+                        s.classList.add('active');
+                    }
+                });
+            });
+        });
+
+        feedbackForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const formData = {
+                name: document.getElementById('feedback-name').value,
+                email: document.getElementById('feedback-email').value,
+                message: document.getElementById('feedback-message').value,
+                rating: ratingInput.value,
+            };
+
+            console.log('Feedback submitted:', formData);
+
+            feedbackForm.style.display = 'none';
+            thankYouMessage.style.display = 'block';
+
+            setTimeout(() => {
+                feedbackForm.reset();
+                stars.forEach((s) => s.classList.remove('active'));
+                ratingInput.value = '0';
+                feedbackForm.style.display = 'block';
+                thankYouMessage.style.display = 'none';
+            }, 5000);
+        });
+
+        // Initialize existing users dropdown on load
+        initExistingUsers();
+    </script>
+</body>
+</html>

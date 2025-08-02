@@ -1810,34 +1810,188 @@
             z-index: 1000;
             display: none;
         }
-.time-presets {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin: 20px 0;
-}
 
-.time-preset {
-    padding: 8px 15px;
-    background: rgba(67, 97, 238, 0.1);
-    border-radius: 20px;
-    cursor: pointer;
-    transition: all 0.3s;
-    font-weight: 500;
-    color: var(--primary-color);
-    border: 1px solid var(--border-color);
-}
+        /* Course Notes Page */
+        .course-notes-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
 
-.time-preset:hover {
-    background: rgba(67, 97, 238, 0.2);
-    transform: translateY(-2px);
-}
+        .course-notes-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
 
-.time-preset.active {
-    background: var(--primary-color);
-    color: white;
-    box-shadow: 0 4px 10px rgba(67, 97, 238, 0.3);
-}
+        .course-selector {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .course-selector select {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--bg-color);
+            color: var(--text-color);
+            font-size: 1rem;
+        }
+
+        .course-selector button {
+            padding: 12px 20px;
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--border-color);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 30px;
+            background: rgba(67, 97, 238, 0.05);
+            transition: all 0.3s;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary-color);
+            background: rgba(67, 97, 238, 0.1);
+        }
+
+        .upload-area i {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .upload-area p {
+            margin-bottom: 15px;
+            color: var(--text-light);
+        }
+
+        .upload-area input[type="file"] {
+            display: none;
+        }
+
+        .upload-btn {
+            padding: 12px 25px;
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+        }
+
+        .course-files {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .file-card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 5px 15px var(--shadow-color);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s;
+        }
+
+        .file-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .file-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .file-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .file-info {
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .file-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .file-actions button {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s;
+        }
+
+        .download-btn {
+            background: linear-gradient(90deg, var(--secondary-color), var(--secondary-dark));
+            color: white;
+        }
+
+        .delete-btn {
+            background: linear-gradient(90deg, var(--danger-color), #ff3d3d);
+            color: white;
+        }
+
+        /* Time presets */
+        .time-presets {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .time-preset {
+            padding: 8px 15px;
+            background: rgba(67, 97, 238, 0.1);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+            color: var(--primary-color);
+            border: 1px solid var(--border-color);
+        }
+
+        .time-preset:hover {
+            background: rgba(67, 97, 238, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .time-preset.active {
+            background: var(--primary-color);
+            color: white;
+            box-shadow: 0 4px 10px rgba(67, 97, 238, 0.3);
+        }
+
         .friend-modal {
             background: var(--card-bg);
             padding: 30px;
@@ -2124,7 +2278,7 @@
         <div class="theme-options">
             <div class="theme-option light" data-theme="light-theme" title="Light Theme"></div>
             <div class="theme-option dark" data-theme="dark-theme" title="Dark Theme"></div>
-            
+    
         </div>
     </div>
 
@@ -2188,6 +2342,12 @@
                     <a href="#tasks">
                         <i class="fas fa-tasks"></i>
                         <span class="nav-text">Tasks</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#course-notes">
+                        <i class="fas fa-book"></i>
+                        <span class="nav-text">Course Notes</span>
                     </a>
                 </li>
                 <li class="nav-item">
@@ -2330,14 +2490,11 @@
                         <button id="start-timer">Start</button>
                         <button id="pause-timer">Pause</button>
                         <button id="reset-timer">Reset</button>
-                        <button id="reset-timr">Task Switching</button>
-                        <button id="reset-timr">Take notes</button>
                     </div>
                     <div class="pause-controls">
                         <button id="take-notes-btn">Take Notes</button>
                         <button id="switch-task-btn">Switch Task</button>
                     </div>
-                    
                    
                     <div class="timer-settings">
                         <label for="study-time">Study Time (minutes):</label>
@@ -2346,11 +2503,11 @@
                         <input type="number" id="break-time" value="5" min="1">
                     </div>
                     <div class="time-presets">
-    <div class="time-preset" data-minutes="15">15 min</div>
-    <div class="time-preset" data-minutes="25">25 min</div>
-    <div class="time-preset" data-minutes="45">45 min</div>
-    <div class="time-preset" data-minutes="60">60 min</div>
-</div>
+                        <div class="time-preset" data-minutes="15">15 min</div>
+                        <div class="time-preset" data-minutes="25">25 min</div>
+                        <div class="time-preset" data-minutes="45">45 min</div>
+                        <div class="time-preset" data-minutes="60">60 min</div>
+                    </div>
                    
                     <div class="time-lock-container">
                         <div class="time-lock-title">Focus Mode <span class="edu-tooltip">ⓘ
@@ -2426,6 +2583,41 @@
                 </div>
             </section>
 
+            <!-- Course Notes Page -->
+            <section id="course-notes" class="page">
+                <h1>Course Notes</h1>
+                <div class="course-notes-container">
+                    <div class="course-notes-header">
+                        <h2>Upload and Organize Your Course Materials</h2>
+                    </div>
+                    
+                    <div class="course-selector">
+                        <select id="course-select">
+                            <option value="">Select a course</option>
+                            <option value="math">Mathematics</option>
+                            <option value="science">Science</option>
+                            <option value="history">History</option>
+                            <option value="literature">Literature</option>
+                            <option value="language">Language</option>
+                            <option value="other">Other</option>
+                        </select>
+                        <button id="add-course-btn">Add New Course</button>
+                    </div>
+                    
+                    <div class="upload-area" id="upload-area">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <h3>Upload Your Files</h3>
+                        <p>Drag & drop files here or click to browse</p>
+                        <input type="file" id="file-upload" multiple>
+                        <label for="file-upload" class="upload-btn">Select Files</label>
+                    </div>
+                    
+                    <div class="course-files" id="course-files">
+                        <!-- Files will be displayed here -->
+                    </div>
+                </div>
+            </section>
+
             <!-- History Page -->
             <section id="history" class="page">
                 <h1>Study History</h1>
@@ -2448,14 +2640,6 @@
             <!-- Notes Page -->
             <section id="notes" class="page">
                 <h1>Your Notes</h1>
-                <div>
-                    Sample notes will be displayed here. You can add, edit, and delete notes to keep track of your study materials.
-                 <form action="#" method="post" enctype="multipart/form-data">
-        <input type="file" name="myfile" id="fileInput">
-        <br><br>
-        <input type="submit" value="Upload">
-    </form>
-                </div>
                 <div class="notes-container">
                     <div class="notes-form">
                         <input type="text" id="note-title" placeholder="Note title...">
@@ -2568,6 +2752,21 @@
         </div>
     </div>
 
+    <!-- Add Course Modal -->
+    <div class="modal-overlay" id="course-modal-overlay">
+        <div class="friend-modal">
+            <h3>Add New Course</h3>
+            <div class="form-group">
+                <label for="new-course-name">Course Name:</label>
+                <input type="text" id="new-course-name" placeholder="Enter course name">
+            </div>
+            <div class="modal-actions">
+                <button class="cancel-btn" id="cancel-course-modal">Cancel</button>
+                <button class="save-btn" id="save-course-modal">Add Course</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Variables
         let currentUser = null;
@@ -2643,6 +2842,16 @@
         const deleteEventBtn = document.getElementById('delete-event-btn');
         const eventModalTitle = document.getElementById('event-modal-title');
         const colorOptions = document.querySelectorAll('.event-color-option');
+        const timePresets = document.querySelectorAll('.time-preset');
+        const courseSelect = document.getElementById('course-select');
+        const addCourseBtn = document.getElementById('add-course-btn');
+        const uploadArea = document.getElementById('upload-area');
+        const fileUpload = document.getElementById('file-upload');
+        const courseFiles = document.getElementById('course-files');
+        const courseModalOverlay = document.getElementById('course-modal-overlay');
+        const newCourseName = document.getElementById('new-course-name');
+        const cancelCourseModal = document.getElementById('cancel-course-modal');
+        const saveCourseModal = document.getElementById('save-course-modal');
 
         // Timer state
         let timer = null;
@@ -2699,6 +2908,10 @@
                     username,
                     tasks: [],
                     notes: [],
+                    courses: {
+                        files: [],
+                        subjects: ['math', 'science', 'history', 'literature', 'language', 'other']
+                    },
                     studyStats: {
                         totalStudyTime: 0,
                         sessionsCompleted: 0,
@@ -2736,28 +2949,8 @@
             loadUserData();
             initializeTimerForUser();
             initializeCalendar();
+            loadCourseFiles();
         }
-        // Time presets functionality
-const timePresets = document.querySelectorAll('.time-preset');
-
-timePresets.forEach(preset => {
-    preset.addEventListener('click', function() {
-        const minutes = parseInt(this.dataset.minutes);
-        studyTimeInput.value = minutes;
-        
-        // Update active state
-        timePresets.forEach(p => p.classList.remove('active'));
-        this.classList.add('active');
-        
-        // Reset timer with new time if not running
-        if (!isRunning) {
-            resetTimer();
-        }
-    });
-});
-
-// Set 25 minutes as default active
-document.querySelector('.time-preset[data-minutes="25"]').classList.add('active');
 
         // Streak functionality
         function updateStreak() {
@@ -3019,6 +3212,7 @@ document.querySelector('.time-preset[data-minutes="25"]').classList.add('active'
         function pauseTimer() {
             clearInterval(timer);
             isRunning = false;
+            pauseControls.style.display = 'flex';
         }
 
         // Reset timer
@@ -3026,6 +3220,7 @@ document.querySelector('.time-preset[data-minutes="25"]').classList.add('active'
             pauseTimer();
             timeLeft = getGlobalStudyTime() * 60;
             updateDisplay();
+            pauseControls.style.display = 'none';
         }
 
         // Update global study & break time inputs
@@ -3046,11 +3241,94 @@ document.querySelector('.time-preset[data-minutes="25"]').classList.add('active'
             pauseControls.style.display = 'none';
         });
 
-        // Switch Task button
+        // Switch Task button - Enhanced with modal-like interface
         switchTaskBtn.addEventListener('click', () => {
-            alert('Select a new task from the Tasks page');
-            pauseControls.style.display = 'none';
+            if (!currentUser) return;
+            
+            const pendingTasks = users[currentUser].tasks.filter(task => !task.completed);
+            
+            if (pendingTasks.length === 0) {
+                alert("No pending tasks available to switch to.");
+                return;
+            }
+            
+            // Create a modal-like interface
+            const modal = document.createElement('div');
+            modal.style.position = 'fixed';
+            modal.style.top = '0';
+            modal.style.left = '0';
+            modal.style.width = '100%';
+            modal.style.height = '100%';
+            modal.style.backgroundColor = 'rgba(0,0,0,0.7)';
+            modal.style.display = 'flex';
+            modal.style.justifyContent = 'center';
+            modal.style.alignItems = 'center';
+            modal.style.zIndex = '1000';
+            
+            const modalContent = document.createElement('div');
+            modalContent.style.backgroundColor = 'var(--card-bg)';
+            modalContent.style.padding = '20px';
+            modalContent.style.borderRadius = '10px';
+            modalContent.style.width = '80%';
+            modalContent.style.maxWidth = '500px';
+            modalContent.style.maxHeight = '80vh';
+            modalContent.style.overflowY = 'auto';
+            
+            modalContent.innerHTML = `
+                <h2 style="margin-top: 0; color: var(--primary-color);">Switch Task</h2>
+                <p>Select a task to switch to:</p>
+                <ul id="task-switch-list" style="list-style: none; padding: 0; margin: 15px 0;">
+                    ${pendingTasks.map(task => `
+                        <li style="padding: 10px; margin-bottom: 5px; background: var(--bg-color); border-radius: 5px; cursor: pointer;"
+                            onclick="switchToTask('${task.id}')">
+                            ${task.text} (${task.priority})
+                        </li>
+                    `).join('')}
+                </ul>
+                <button style="padding: 10px 20px; background: var(--primary-color); color: white; border: none; border-radius: 5px; cursor: pointer;"
+                    onclick="document.body.removeChild(this.parentNode.parentNode); pauseControls.style.display = 'none'">
+                    Cancel
+                </button>
+            `;
+            
+            modal.appendChild(modalContent);
+            document.body.appendChild(modal);
         });
+
+        // Global function to switch tasks
+        window.switchToTask = function(taskId) {
+            const task = users[currentUser].tasks.find(t => t.id === taskId);
+            if (task) {
+                currentTaskId = task.id;
+                currentTaskDisplay.textContent = `Currently working on: ${task.text}`;
+                document.querySelector('.nav-item a[href="#timer"]').parentElement.click();
+                pauseControls.style.display = 'none';
+                
+                // Remove the modal
+                const modal = document.querySelector('div[style*="position: fixed; top: 0"]');
+                if (modal) document.body.removeChild(modal);
+            }
+        };
+
+        // Time presets functionality
+        timePresets.forEach(preset => {
+            preset.addEventListener('click', function() {
+                const minutes = parseInt(this.dataset.minutes);
+                studyTimeInput.value = minutes;
+                
+                // Update active state
+                timePresets.forEach(p => p.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Reset timer with new time if not running
+                if (!isRunning) {
+                    resetTimer();
+                }
+            });
+        });
+
+        // Set 25 minutes as default active
+        document.querySelector('.time-preset[data-minutes="25"]').classList.add('active');
 
         // --- Time Lock functionality ---
         enableTimeLockBtn.addEventListener('click', () => {
@@ -3640,6 +3918,161 @@ document.querySelector('.time-preset[data-minutes="25"]').classList.add('active'
             // Default response
             return "I'm here to help with your study journey! Ask about learning techniques, time management, or productivity strategies.";
         }
+
+        // --- Course Notes Functionality ---
+        function loadCourseFiles() {
+            if (!currentUser) return;
+            const files = users[currentUser].courses.files || [];
+            courseFiles.innerHTML = '';
+
+            if (files.length === 0) {
+                courseFiles.innerHTML = '<p>No files uploaded yet. Upload your first file above.</p>';
+                return;
+            }
+
+            files.forEach(file => {
+                const fileCard = document.createElement('div');
+                fileCard.className = 'file-card';
+                fileCard.dataset.id = file.id;
+
+                // Get file icon based on type
+                let fileIcon = 'fa-file';
+                if (file.type.includes('image')) fileIcon = 'fa-file-image';
+                else if (file.type.includes('pdf')) fileIcon = 'fa-file-pdf';
+                else if (file.type.includes('word')) fileIcon = 'fa-file-word';
+                else if (file.type.includes('excel')) fileIcon = 'fa-file-excel';
+                else if (file.type.includes('powerpoint')) fileIcon = 'fa-file-powerpoint';
+                else if (file.type.includes('zip')) fileIcon = 'fa-file-archive';
+
+                fileCard.innerHTML = `
+                    <div class="file-icon"><i class="fas ${fileIcon}"></i></div>
+                    <div class="file-name">${file.name}</div>
+                    <div class="file-info">
+                        <span>${file.course}</span>
+                        <span>${formatFileSize(file.size)}</span>
+                    </div>
+                    <div class="file-actions">
+                        <button class="download-btn">Download</button>
+                        <button class="delete-btn">Delete</button>
+                    </div>
+                `;
+
+                const downloadBtn = fileCard.querySelector('.download-btn');
+                const deleteBtn = fileCard.querySelector('.delete-btn');
+
+                downloadBtn.addEventListener('click', () => {
+                    // In a real app, this would download the actual file
+                    alert(`Downloading ${file.name}`);
+                });
+
+                deleteBtn.addEventListener('click', () => {
+                    if (confirm(`Are you sure you want to delete ${file.name}?`)) {
+                        users[currentUser].courses.files = users[currentUser].courses.files.filter(f => f.id !== file.id);
+                        localStorage.setItem('studyPlannerUsers', JSON.stringify(users));
+                        loadCourseFiles();
+                    }
+                });
+
+                courseFiles.appendChild(fileCard);
+            });
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' bytes';
+            else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+            else return (bytes / 1048576).toFixed(1) + ' MB';
+        }
+
+        // File upload functionality
+        uploadArea.addEventListener('click', () => {
+            fileUpload.click();
+        });
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = 'var(--primary-color)';
+            uploadArea.style.background = 'rgba(67, 97, 238, 0.1)';
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.borderColor = 'var(--border-color)';
+            uploadArea.style.background = 'rgba(67, 97, 238, 0.05)';
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = 'var(--border-color)';
+            uploadArea.style.background = 'rgba(67, 97, 238, 0.05)';
+            
+            if (e.dataTransfer.files.length > 0) {
+                handleFiles(e.dataTransfer.files);
+            }
+        });
+
+        fileUpload.addEventListener('change', () => {
+            if (fileUpload.files.length > 0) {
+                handleFiles(fileUpload.files);
+            }
+        });
+
+        function handleFiles(files) {
+            const course = courseSelect.value;
+            if (!course) {
+                alert('Please select a course first');
+                return;
+            }
+
+            Array.from(files).forEach(file => {
+                // In a real app, you would upload the actual file to a server
+                // Here we'll just store the file info
+                const newFile = {
+                    id: Date.now().toString(),
+                    name: file.name,
+                    type: file.type,
+                    size: file.size,
+                    course: courseSelect.options[courseSelect.selectedIndex].text,
+                    uploadedAt: new Date().toISOString()
+                };
+
+                if (!users[currentUser].courses.files) {
+                    users[currentUser].courses.files = [];
+                }
+                users[currentUser].courses.files.push(newFile);
+            });
+
+            localStorage.setItem('studyPlannerUsers', JSON.stringify(users));
+            loadCourseFiles();
+            fileUpload.value = ''; // Reset file input
+        }
+
+        // Add new course functionality
+        addCourseBtn.addEventListener('click', () => {
+            newCourseName.value = '';
+            courseModalOverlay.style.display = 'flex';
+        });
+
+        cancelCourseModal.addEventListener('click', () => {
+            courseModalOverlay.style.display = 'none';
+        });
+
+        saveCourseModal.addEventListener('click', () => {
+            const courseName = newCourseName.value.trim();
+            if (!courseName) return;
+
+            if (!users[currentUser].courses.subjects.includes(courseName.toLowerCase())) {
+                users[currentUser].courses.subjects.push(courseName.toLowerCase());
+                
+                // Add to dropdown
+                const option = document.createElement('option');
+                option.value = courseName.toLowerCase();
+                option.textContent = courseName;
+                courseSelect.appendChild(option);
+                
+                localStorage.setItem('studyPlannerUsers', JSON.stringify(users));
+            }
+
+            courseModalOverlay.style.display = 'none';
+        });
 
         // Initialize existing users dropdown on load
         initExistingUsers();

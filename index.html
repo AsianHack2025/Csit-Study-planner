@@ -62,41 +62,8 @@
             --nav-bg: rgba(25, 40, 80, 0.95);
         }
 
-        /* Educational Theme */
-        .edu-theme {
-            --primary-color: #4895ef;
-            --primary-dark: #3f37c9;
-            --secondary-color: #4cc9f0;
-            --secondary-dark: #4361ee;
-            --accent-color: #b5179e;
-            --danger-color: #f72585;
-            --warning-color: #f8961e;
-            --text-color: #212529;
-            --text-light: #495057;
-            --bg-color: #f8f9fa;
-            --card-bg: #ffffff;
-            --border-color: #dee2e6;
-            --shadow-color: rgba(0, 0, 0, 0.1);
-            --nav-bg: #184e77;
-        }
-
-        /* Nature Theme */
-        .nature-theme {
-            --primary-color: #2a9d8f;
-            --primary-dark: #264653;
-            --secondary-color: #e9c46a;
-            --secondary-dark: #f4a261;
-            --accent-color: #e76f51;
-            --danger-color: #e63946;
-            --warning-color: #ffbe0b;
-            --text-color: #1d3557;
-            --text-light: #457b9d;
-            --bg-color: #f1faee;
-            --card-bg: #ffffff;
-            --border-color: #a8dadc;
-            --shadow-color: rgba(0, 0, 0, 0.1);
-            --nav-bg: #1b4332;
-        }
+      
+       
 
         body {
             background-color: var(--bg-color);
@@ -272,7 +239,7 @@
 
         /* Navbar */
         .navbar {
-            width: 80px;
+            width: 100px;
             background: var(--nav-bg);
             color: white;
             transition: width 0.3s ease;
@@ -1746,11 +1713,12 @@
         /* Theme Selector */
         .theme-selector {
             position: fixed;
-            bottom: 20px;
-            left: 20px;
+            height: 80px;
+            bottom: 10px;
+            left: 10px;
             z-index: 1000;
             background: var(--card-bg);
-            padding: 15px;
+            padding: 5px;
             border-radius: 10px;
             box-shadow: 0 5px 15px var(--shadow-color);
             border: 1px solid var(--border-color);

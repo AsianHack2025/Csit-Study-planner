@@ -1810,7 +1810,34 @@
             z-index: 1000;
             display: none;
         }
+.time-presets {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 20px 0;
+}
 
+.time-preset {
+    padding: 8px 15px;
+    background: rgba(67, 97, 238, 0.1);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: 500;
+    color: var(--primary-color);
+    border: 1px solid var(--border-color);
+}
+
+.time-preset:hover {
+    background: rgba(67, 97, 238, 0.2);
+    transform: translateY(-2px);
+}
+
+.time-preset.active {
+    background: var(--primary-color);
+    color: white;
+    box-shadow: 0 4px 10px rgba(67, 97, 238, 0.3);
+}
         .friend-modal {
             background: var(--card-bg);
             padding: 30px;
@@ -2039,6 +2066,7 @@
             .navbar.expanded ~ .main-content {
                 margin-left: 0;
             }
+            
            
             .nav-links {
                 display: flex;
@@ -2096,8 +2124,7 @@
         <div class="theme-options">
             <div class="theme-option light" data-theme="light-theme" title="Light Theme"></div>
             <div class="theme-option dark" data-theme="dark-theme" title="Dark Theme"></div>
-            <div class="theme-option edu" data-theme="edu-theme" title="Educational Theme"></div>
-            <div class="theme-option nature" data-theme="nature-theme" title="Nature Theme"></div>
+            
         </div>
     </div>
 
@@ -2290,7 +2317,7 @@
             <section id="timer" class="page">
                 <h1>Study Timer <span class="edu-tooltip">ⓘ
                     <span class="edu-tooltiptext">
-                        Research shows that focused 25-50 minute study blocks followed by 5-10 minute breaks align with natural cognitive rhythms, preventing mental fatigue.
+                        
                     </span>
                 </span></h1>
                 <div class="timer-container">
@@ -2315,6 +2342,12 @@
                         <label for="break-time">Break Time (minutes):</label>
                         <input type="number" id="break-time" value="5" min="1">
                     </div>
+                    <div class="time-presets">
+    <div class="time-preset" data-minutes="15">15 min</div>
+    <div class="time-preset" data-minutes="25">25 min</div>
+    <div class="time-preset" data-minutes="45">45 min</div>
+    <div class="time-preset" data-minutes="60">60 min</div>
+</div>
                    
                     <div class="time-lock-container">
                         <div class="time-lock-title">Focus Mode <span class="edu-tooltip">ⓘ
@@ -2693,6 +2726,27 @@
             initializeTimerForUser();
             initializeCalendar();
         }
+        // Time presets functionality
+const timePresets = document.querySelectorAll('.time-preset');
+
+timePresets.forEach(preset => {
+    preset.addEventListener('click', function() {
+        const minutes = parseInt(this.dataset.minutes);
+        studyTimeInput.value = minutes;
+        
+        // Update active state
+        timePresets.forEach(p => p.classList.remove('active'));
+        this.classList.add('active');
+        
+        // Reset timer with new time if not running
+        if (!isRunning) {
+            resetTimer();
+        }
+    });
+});
+
+// Set 25 minutes as default active
+document.querySelector('.time-preset[data-minutes="25"]').classList.add('active');
 
         // Streak functionality
         function updateStreak() {

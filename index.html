@@ -62,8 +62,41 @@
             --nav-bg: rgba(25, 40, 80, 0.95);
         }
 
-      
-       
+        /* Educational Theme */
+        .edu-theme {
+            --primary-color: #4895ef;
+            --primary-dark: #3f37c9;
+            --secondary-color: #4cc9f0;
+            --secondary-dark: #4361ee;
+            --accent-color: #b5179e;
+            --danger-color: #f72585;
+            --warning-color: #f8961e;
+            --text-color: #212529;
+            --text-light: #495057;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --border-color: #dee2e6;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --nav-bg: #184e77;
+        }
+
+        /* Nature Theme */
+        .nature-theme {
+            --primary-color: #2a9d8f;
+            --primary-dark: #264653;
+            --secondary-color: #e9c46a;
+            --secondary-dark: #f4a261;
+            --accent-color: #e76f51;
+            --danger-color: #e63946;
+            --warning-color: #ffbe0b;
+            --text-color: #1d3557;
+            --text-light: #457b9d;
+            --bg-color: #f1faee;
+            --card-bg: #ffffff;
+            --border-color: #a8dadc;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --nav-bg: #1b4332;
+        }
 
         body {
             background-color: var(--bg-color);
@@ -239,7 +272,7 @@
 
         /* Navbar */
         .navbar {
-            width: 100px;
+            width: 80px;
             background: var(--nav-bg);
             color: white;
             transition: width 0.3s ease;
@@ -788,6 +821,33 @@
             margin-top: 15px;
             font-size: 0.9rem;
             color: var(--text-light);
+        }
+
+        /* Bookmark Controls */
+        .bookmark-controls {
+            display: none;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .bookmark-controls button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 0 10px;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        #save-bookmark-btn {
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-dark));
+        }
+
+        #load-bookmark-btn {
+            background: linear-gradient(90deg, var(--secondary-color), var(--secondary-dark));
         }
 
         /* Progress Page Styles */
@@ -1713,12 +1773,11 @@
         /* Theme Selector */
         .theme-selector {
             position: fixed;
-            height: 80px;
-            bottom: 10px;
-            left: 10px;
+            bottom: 20px;
+            left: 20px;
             z-index: 1000;
             background: var(--card-bg);
-            padding: 5px;
+            padding: 15px;
             border-radius: 10px;
             box-shadow: 0 5px 15px var(--shadow-color);
             border: 1px solid var(--border-color);
@@ -2145,10 +2204,52 @@
             border-color: var(--primary-color);
         }
 
+        /* Bookmark Modal */
+        .bookmark-modal {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .bookmark-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin: 20px 0;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        .bookmark-item {
+            padding: 10px;
+            margin-bottom: 10px;
+            background: var(--bg-color);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .bookmark-item:hover {
+            background: rgba(67, 97, 238, 0.1);
+        }
+
+        .bookmark-task {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .bookmark-time {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
         /* Responsive Design */
         @media (max-width: 992px) {
             .navbar {
-                width: 70px;
+                width: 100px;
             }
            
             .navbar.expanded {
@@ -2246,7 +2347,6 @@
         <div class="theme-options">
             <div class="theme-option light" data-theme="light-theme" title="Light Theme"></div>
             <div class="theme-option dark" data-theme="dark-theme" title="Dark Theme"></div>
-    
         </div>
     </div>
 
@@ -2462,6 +2562,10 @@
                     <div class="pause-controls">
                         <button id="take-notes-btn">Take Notes</button>
                         <button id="switch-task-btn">Switch Task</button>
+                    </div>
+                    <div class="bookmark-controls">
+                        <button id="save-bookmark-btn">Save Bookmark</button>
+                        <button id="load-bookmark-btn">Load Bookmark</button>
                     </div>
                    
                     <div class="timer-settings">
@@ -2735,6 +2839,19 @@
         </div>
     </div>
 
+    <!-- Bookmark Modal -->
+    <div class="modal-overlay" id="bookmark-modal-overlay">
+        <div class="bookmark-modal">
+            <h3>Saved Bookmarks</h3>
+            <div class="bookmark-list" id="bookmark-list">
+                <p>No bookmarks saved yet</p>
+            </div>
+            <div class="modal-actions">
+                <button class="cancel-btn" id="cancel-bookmark-modal">Close</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Variables
         let currentUser = null;
@@ -2743,6 +2860,7 @@
         let studyHistory = JSON.parse(localStorage.getItem('studyPlannerHistory')) || {};
         let streaks = JSON.parse(localStorage.getItem('studyPlannerStreaks')) || {};
         let calendarEvents = JSON.parse(localStorage.getItem('studyPlannerCalendarEvents')) || {};
+        let bookmarks = JSON.parse(localStorage.getItem('studyPlannerBookmarks')) || {};
         let calendar = null;
         let currentEvent = null;
 
@@ -2766,6 +2884,9 @@
         const pauseControls = document.querySelector('.pause-controls');
         const takeNotesBtn = document.getElementById('take-notes-btn');
         const switchTaskBtn = document.getElementById('switch-task-btn');
+        const bookmarkControls = document.querySelector('.bookmark-controls');
+        const saveBookmarkBtn = document.getElementById('save-bookmark-btn');
+        const loadBookmarkBtn = document.getElementById('load-bookmark-btn');
         const enableTimeLockBtn = document.getElementById('enable-time-lock');
         const disableTimeLockBtn = document.getElementById('disable-time-lock');
         const timeLockStatus = document.getElementById('time-lock-status');
@@ -2820,6 +2941,9 @@
         const newCourseName = document.getElementById('new-course-name');
         const cancelCourseModal = document.getElementById('cancel-course-modal');
         const saveCourseModal = document.getElementById('save-course-modal');
+        const bookmarkModalOverlay = document.getElementById('bookmark-modal-overlay');
+        const bookmarkList = document.getElementById('bookmark-list');
+        const cancelBookmarkModal = document.getElementById('cancel-bookmark-modal');
 
         // Timer state
         let timer = null;
@@ -2902,6 +3026,11 @@
                 if (!calendarEvents[username]) {
                     calendarEvents[username] = [];
                     localStorage.setItem('studyPlannerCalendarEvents', JSON.stringify(calendarEvents));
+                }
+
+                if (!bookmarks[username]) {
+                    bookmarks[username] = [];
+                    localStorage.setItem('studyPlannerBookmarks', JSON.stringify(bookmarks));
                 }
             }
 
@@ -3181,6 +3310,7 @@
             clearInterval(timer);
             isRunning = false;
             pauseControls.style.display = 'flex';
+            bookmarkControls.style.display = 'flex';
         }
 
         // Reset timer
@@ -3189,6 +3319,7 @@
             timeLeft = getGlobalStudyTime() * 60;
             updateDisplay();
             pauseControls.style.display = 'none';
+            bookmarkControls.style.display = 'none';
         }
 
         // Update global study & break time inputs
@@ -3207,6 +3338,7 @@
         takeNotesBtn.addEventListener('click', () => {
             document.querySelector('.nav-item a[href="#notes"]').parentElement.click();
             pauseControls.style.display = 'none';
+            bookmarkControls.style.display = 'none';
         });
 
         // Switch Task button - Enhanced with modal-like interface
@@ -3254,7 +3386,7 @@
                     `).join('')}
                 </ul>
                 <button style="padding: 10px 20px; background: var(--primary-color); color: white; border: none; border-radius: 5px; cursor: pointer;"
-                    onclick="document.body.removeChild(this.parentNode.parentNode); pauseControls.style.display = 'none'">
+                    onclick="document.body.removeChild(this.parentNode.parentNode); pauseControls.style.display = 'none'; bookmarkControls.style.display = 'none'">
                     Cancel
                 </button>
             `;
@@ -3271,6 +3403,7 @@
                 currentTaskDisplay.textContent = `Currently working on: ${task.text}`;
                 document.querySelector('.nav-item a[href="#timer"]').parentElement.click();
                 pauseControls.style.display = 'none';
+                bookmarkControls.style.display = 'none';
                 
                 // Remove the modal
                 const modal = document.querySelector('div[style*="position: fixed; top: 0"]');
@@ -3323,6 +3456,86 @@
             } else {
                 alert('Incorrect password. Focus mode remains active.');
             }
+        });
+
+        // --- Bookmark functionality ---
+        saveBookmarkBtn.addEventListener('click', () => {
+            if (!currentUser) return;
+            
+            const task = users[currentUser].tasks.find(t => t.id === currentTaskId);
+            const taskName = task ? task.text : "No specific task";
+            
+            const newBookmark = {
+                id: Date.now().toString(),
+                taskId: currentTaskId,
+                taskName: taskName,
+                timeLeft: timeLeft,
+                studyTime: getGlobalStudyTime() * 60,
+                createdAt: new Date().toISOString()
+            };
+            
+            if (!bookmarks[currentUser]) {
+                bookmarks[currentUser] = [];
+            }
+            
+            bookmarks[currentUser].push(newBookmark);
+            localStorage.setItem('studyPlannerBookmarks', JSON.stringify(bookmarks));
+            
+            alert(`Bookmark saved for "${taskName}" at ${formatTime(timeLeft)}`);
+        });
+
+        loadBookmarkBtn.addEventListener('click', () => {
+            if (!currentUser || !bookmarks[currentUser] || bookmarks[currentUser].length === 0) {
+                alert("No bookmarks saved yet");
+                return;
+            }
+            
+            openBookmarkModal();
+        });
+
+        function openBookmarkModal() {
+            bookmarkList.innerHTML = '';
+            
+            if (!bookmarks[currentUser] || bookmarks[currentUser].length === 0) {
+                bookmarkList.innerHTML = '<p>No bookmarks saved yet</p>';
+            } else {
+                bookmarks[currentUser].forEach(bookmark => {
+                    const bookmarkItem = document.createElement('div');
+                    bookmarkItem.className = 'bookmark-item';
+                    bookmarkItem.dataset.id = bookmark.id;
+                    
+                    bookmarkItem.innerHTML = `
+                        <div class="bookmark-task">${bookmark.taskName}</div>
+                        <div class="bookmark-time">Saved at: ${formatTime(bookmark.timeLeft)} (${Math.floor(bookmark.studyTime/60)} min session)</div>
+                    `;
+                    
+                    bookmarkItem.addEventListener('click', () => {
+                        loadBookmark(bookmark);
+                        bookmarkModalOverlay.style.display = 'none';
+                    });
+                    
+                    bookmarkList.appendChild(bookmarkItem);
+                });
+            }
+            
+            bookmarkModalOverlay.style.display = 'flex';
+        }
+
+        function loadBookmark(bookmark) {
+            currentTaskId = bookmark.taskId;
+            const task = users[currentUser].tasks.find(t => t.id === bookmark.taskId);
+            currentTaskDisplay.textContent = `Currently working on: ${task ? task.text : "No specific task"}`;
+            
+            timeLeft = bookmark.timeLeft;
+            studyTimeInput.value = Math.floor(bookmark.studyTime / 60);
+            updateDisplay();
+            
+            pauseControls.style.display = 'none';
+            bookmarkControls.style.display = 'none';
+        }
+
+        cancelBookmarkModal.addEventListener('click', () => {
+            bookmarkModalOverlay.style.display = 'none';
         });
 
         // --- Calendar functionality ---
@@ -3929,7 +4142,7 @@
                 const deleteBtn = fileCard.querySelector('.delete-btn');
 
                 downloadBtn.addEventListener('click', () => {
-                    // In a real app, this would download the actual file
+                    // In a real app, this would download the actual file to a server
                     alert(`Downloading ${file.name}`);
                 });
 
